@@ -83,9 +83,9 @@ def editar():
                     while qualeditar != 1 and qualeditar != 2 and qualeditar != 3:
                         print('Função não encontrada! \nTente novamente!')
                         editar()
+preco_compra = 0
 def comprar():
-    global a, preco_compra, compra
-    preco_compra = 0
+    global a, preco_compra
     continuar = 'S'
     while a == 3 and continuar == 'S':
         tabela()
@@ -101,43 +101,40 @@ def comprar():
                 print('Sem problemas!')
                 menu()
             elif l == 'S':
-                quantidade()
+                qualquant = inputnum(f'Quantos {controle[compra]["Produto"]} você quer comprar? ', erro = f'Digite somente números! Tente novamente! \nQuantos {controle[compra]["Produto"]} você quer comprar? ')
+                for i,produto in enumerate(controle):
+                    if i == compra:
+                        if qualquant > produto["Quantidade"] or qualquant <= 0:
+                            print('Valor não suportado!')
+                            comprar()
+                        else:
+                            preco_compra += produto["Preço"]*qualquant
+                            print(f'Sua compra está custando: R$ {preco_compra}')
+                            produto["Quantidade"] -= qualquant
+                            continuar = pedir_texto('Quer comprar outro produto? Digite [S] Sim ou [N] Não: ', escolhas=['S', 'N'], erro = 'Valor inválido, tente novamente!')
+                            if continuar == 'N':
+                                print(f'Sua compra ficou no valor de R$ {preco_compra}')
+                                pagamento = inputfloat('Digite o valor a ser entregue: \n-> ', erro = 'Digite somente números! Tente novamente! \nDigite o valor a ser entregue: ')
+                                if pagamento >= preco_compra:
+                                    troco = pagamento - preco_compra
+                                    print(f'Seu troco é de R$ {troco} \nObrigado pela compra, volte sempre!')
+                                    menu()
+                                else:
+                                    print(f'Valor menor que R$ {preco_compra} \nDigite um valor válido!')
+                                    pagamento = inputfloat('Digite o valor a ser entregue: \n-> ', erro = 'Digite somente números! Tente novamente! \nDigite o valor a ser entregue: ')
+                            tabela()
+                            menu()
+
 def tabela():
     print('\n')
-    print('-'*73)
-    print('|     | Produto               | Preço                 | Quantidade            ')
+    print('-'*80)
+    print('|    | Produto               | Preço                 | Quantidade            ')
     for a, b in enumerate(controle):
-        print(f'| {a:>3}', end = ' ')
+        print(f'| {a:>2}', end = ' ')
         for d in b.values():
             print(f'| {str(d):<21}', end = ' ')
         print('')
     print('\n')
-
-def quantidade():
-    global compra, preco_compra
-    qualquant = inputnum(f'Quantos {controle[compra]["Produto"]} você quer comprar? ', erro = f'Digite somente números! Tente novamente! \nQuantos {controle[compra]["Produto"]} você quer comprar? ')
-    for i,produto in enumerate(controle):
-        if i == compra:
-            if qualquant > produto["Quantidade"] or qualquant <= 0:
-                print('Valor não suportado!')
-                quantidade()
-            else:
-                preco_compra += produto["Preço"]*qualquant
-                print(f'Sua compra está custando: R$ {preco_compra}')
-                produto["Quantidade"] -= qualquant
-                continuar = pedir_texto('Quer comprar outro produto? Digite [S] Sim ou [N] Não: ', escolhas=['S', 'N'], erro = 'Valor inválido, tente novamente!')
-                if continuar == 'N':
-                    print(f'Sua compra ficou no valor de R$ {preco_compra}')
-                    pagamento = inputfloat('Digite o valor a ser entregue: \n-> ', erro = 'Digite somente números! Tente novamente! \nDigite o valor a ser entregue: ')
-                    while pagamento < preco_compra:
-                        print(f'Valor menor que R$ {preco_compra} \nDigite um valor válido!')
-                        pagamento = inputfloat('Digite o valor a ser entregue: \n-> ', erro = 'Digite somente números! Tente novamente! \nDigite o valor a ser entregue: ')
-                    if pagamento >= preco_compra:
-                        troco = pagamento - preco_compra
-                        print(f'Seu troco é de R$ {troco} \nObrigado pela compra, volte sempre!')
-                        menu()
-                tabela()
-                menu()
 
 def editar_nome():
     global buscar
