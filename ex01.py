@@ -9,12 +9,12 @@ elemento = dict()
 def menu():
     global a
     tabela_menu = Table(title='Budega Sol Frio')
-    tabela_menu.add_column('Cadastrar produto')
-    tabela_menu.add_column('Editar produto')
-    tabela_menu.add_column('Fazer compra')
-    tabela_menu.add_row('[1]','[2]','[3]')
+    tabela_menu.add_column('Cadastrar Produto', justify='center')
+    tabela_menu.add_column(' Editar Produto ', justify='center')
+    tabela_menu.add_column('  Fazer Comprar ', justify='center')
+    tabela_menu.add_row('[Digite 1]','[Digite 2]','[Digite 3]')
     console.print(tabela_menu)
-    a = inputnum('Digite aqui \n -> ', erro = 'Digite somente números! Tente novamente! \nDigite aqui \n -> ')
+    a = inputnum('Digite aqui -> ', erro = 'Digite somente números! Tente novamente! \nDigite aqui -> ')
     if a == 1:
         cadastrar()
     elif len(controle) != 0:
@@ -70,10 +70,11 @@ def cadastrar():
 def editar():
     global a, buscar
     while a == 2:
+        tabela()
         buscar = inputnum('Entre com um índice para mostrar o produto ou digite 1000 para parar: ', erro = 'Digite somente números! Tente novamente! \nEntre com um índice para mostrar o produto ou digite 1000 para parar: ')
         if buscar == 1000:
             menu()
-        if buscar >= len(controle):
+        if buscar >= len(controle) or buscar < 0:
             console.print(f'[on red]Não temos produto com índice {buscar}[on red/]')
         else:
             console.print(f'[orange]O produto {buscar} é o {controle[buscar]["Produto"]}[orange/]')
@@ -82,7 +83,13 @@ def editar():
                 console.print('[purple]Sem problemas![purple/]')
                 editar()
             elif o == 'S':
-                qualeditar = inputnum('Qual opção você quer editar? \n[1] Nome do Produto \n[2] Preço do Produto \n[3] Quantidade Disponível \nPara finalizar Digite 1000 \n -> ', erro = 'Digite somente números! Tente novamente! \nQual opção você quer editar? \n[1] Nome do Produto \n[2] Preço do Produto \n[3] Quantidade Disponível \nPara finalizar Digite 1000 \n -> ')
+                tabela_editar = Table(title='Opções de Edição')
+                tabela_editar.add_column('  Nome do Produto   ', justify='center')
+                tabela_editar.add_column(' Preço do Produto  ', justify='center')
+                tabela_editar.add_column('Quantidade Disponível', justify='center')
+                tabela_editar.add_row('[Digite 1]','[Digite 2]','[Digite 3]')
+                console.print(tabela_editar)
+                qualeditar = inputnum('Qual opção você quer editar? \nPara finalizar Digite 1000 \n -> ', erro = 'Digite somente números! Tente novamente! \nQual opção você quer editar? \nPara finalizar Digite 1000 \n -> ')
                 while qualeditar > 0 and qualeditar <= 3:
                     if qualeditar == 1:
                         editar_nome()
@@ -102,7 +109,7 @@ def comprar():
         compra = inputnum('Qual o índice do produto que deseja comprar? Se deseja cancelar Digite 1000 \n-> ', erro = 'Digite somente números! Tente novamente! \nQual o índice do produto que deseja comprar? Se deseja cancelar Digite 1000 \n-> ')
         if compra == 1000:
             menu()
-        elif compra >= len(controle):
+        elif compra >= len(controle) or compra < 0:
             console.print(f'[on red]Não temos produto com índice {compra}[on red/]')
         else:
             console.print(f'[orange]O produto {compra} é o {controle[compra]["Produto"]}[orange/]')
@@ -125,15 +132,22 @@ def comprar():
                             if continuar == 'N':
                                 console.print(f'Sua compra ficou no valor de R$ [green]{preco_compra}[green/]')
                                 pagamento = inputfloat('Digite o valor a ser entregue: \n-> ', erro = 'Digite somente números! Tente novamente! \nDigite o valor a ser entregue: ')
-                                if pagamento >= preco_compra:
+                                while pagamento < preco_compra:
+                                    console.print(f'Valor menor que [red]R$ {preco_compra}[red/] \nDigite um valor válido!')
+                                    pagamento = inputfloat('Digite o valor a ser entregue: \n-> ', erro = 'Digite somente números! Tente novamente! \nDigite o valor a ser entregue: ')
+                                if pagamento > preco_compra:
                                     troco = pagamento - preco_compra
                                     console.print(f'Seu troco é de [green]R$ {troco}[green/] \nObrigado pela compra, volte sempre!')
+                                    preco_compra = 0
                                     sleep(3)
                                     clear()
                                     menu()
                                 else:
-                                    console.print(f'Valor menor que [red]R$ {preco_compra}[red/] \nDigite um valor válido!')
-                                    pagamento = inputfloat('Digite o valor a ser entregue: \n-> ', erro = 'Digite somente números! Tente novamente! \nDigite o valor a ser entregue: ')
+                                    console.print(f'[green]Obrigado pela compra, volte sempre![green/]')
+                                    preco_compra = 0
+                                    sleep(3)
+                                    clear()
+                                    menu()
                             else:
                                 comprar()
                             tabela()
@@ -141,7 +155,7 @@ def comprar():
 
 def tabela():
     tabela_prod = Table(title='Produtos')
-    tabela_prod.add_column('Índice')
+    tabela_prod.add_column('#')
     tabela_prod.add_column('Produto')
     tabela_prod.add_column('Quantidade')
     tabela_prod.add_column('Preço')
@@ -241,3 +255,5 @@ def clear():
     else:
         _ = system('clear')
 menu()
+
+
